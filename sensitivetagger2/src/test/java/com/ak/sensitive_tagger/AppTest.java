@@ -1,4 +1,4 @@
-package com.ak.sensitivetagger2;
+package com.ak.sensitive_tagger;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
