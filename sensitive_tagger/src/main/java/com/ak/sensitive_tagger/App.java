@@ -6,8 +6,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -17,17 +19,21 @@ import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.api.java.UDF1;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
+import org.json.JSONObject;
 
 import scala.collection.Iterator;
 import scala.collection.JavaConverters;
 
 import com.ak.sensitive_tagger.entity.Rule;
+import com.ak.sensitive_tagger.utils.KafkaLoader;
 import com.ak.sensitive_tagger.utils.RuleParser;
 
 public class App {
 	public static void main(String[] args) throws IOException {
 		String ruleFileName = "rules.json";
 		String csvFileName = "ak.csv";
+		String kafkaConfig="localhost:9092";
+		String kafkaTopicName="test";
 
 		Map<String, List<String>> ruleMap = getRules(ruleFileName);
 		
@@ -71,18 +77,29 @@ public class App {
 						.asScalaIteratorConverter(columnIdentifier.iterator()).asScala()
 						.toSeq());
 		Iterator<String> it = returnMap.keySet().iterator();
+		Set<String>tagSet = new HashSet<String>();
+		JSONObject jObj1 = new JSONObject();
+		JSONObject inference = new JSONObject();
+		inference.put("file", csvFileName);
+		List<JSONObject> jList = new ArrayList<JSONObject>();
 		while (it.hasNext()) {
 			String key = it.next();
 			if (Double.valueOf("" + returnMap.get(key).get()) >= 0.5) {
-				System.out.println("TAG : " + key.split("_COL_")[0]
-						+ " : column name/position : " + key.split("_COL_")[1]
-						+ " : SCORE : "
-						+ Double.valueOf("" + returnMap.get(key).get()) * 100);
+				jObj1 = new JSONObject();
+				String tag = key.split("_COL_")[0];
+				String columnName = key.split("_COL_")[1];
+				Double score = Double.valueOf("" + returnMap.get(key).get()) * 100;
+				tagSet.add(tag);
+				jObj1.put("tag", tag);
+				jObj1.put("column_id", columnName);
+				jObj1.put("score", score);
+				jList.add(jObj1);
 			}
 		}
-	
-		
-
+	inference.put("tags", tagSet);
+	inference.put("columns", jList);
+	KafkaLoader.writeMessageToKafka(kafkaConfig, kafkaTopicName,inference.toString());
+	System.out.println("Done");
 	}
 
 	private static UDF1<Object, Integer> getUdf(final List<String> patterns) {
