@@ -8,6 +8,8 @@ jsonMessage="'{"id":$policy_id,"guid":"b09e2e8d-a4cc-4984-a0c0-a1d257a9a5d2","is
 
 echo "creating ranger policy for data feed"
 
-echo  "curl -iv -u admin:admin-password1 -d ${jsonMessage} -H \"Content-Type: application/json\" -X POST http://52.54.133.186:6080/service/public/v2/api/policy -vvv"
+echo $jsonMessage
+echo  "curl -iv -u admin:admin -d ${jsonMessage} -H \"Content-Type: application/json\" -X POST http://ip:6080/service/public/v2/api/policy -vvv"
 
 curl -iv -u admin:admin -d ${jsonMessage} -H "Content-Type: application/json" -X POST http://ip:6080/service/public/v2/api/policy -vvv
+[
