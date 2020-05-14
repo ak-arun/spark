@@ -17,7 +17,7 @@ object DynamodbConnectionExample {
       .appName("DynamodbConnectionExample")
       .getOrCreate()
     val ak = "";
-		val sk = "";
+    val sk = "";
     System.setProperty("aws.accessKeyId", ak);
     System.setProperty("aws.secretAccessKey", sk);
     System.setProperty("aws.dynamodb.region", "us-east-2");
