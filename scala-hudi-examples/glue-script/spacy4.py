@@ -6,7 +6,7 @@ import boto3
  
 from setuptools.command import easy_install
 install_path = os.environ['GLUE_INSTALLATION']
-easy_install.main( ["--install-dir", install_path, "spacy==2.3.0"] )
+easy_install.main( ["--install-dir", install_path, "spacy==2.3.1"] )
 easy_install.main( ["--install-dir", install_path, "spacy-langdetect"] )
 reload(site)
  
