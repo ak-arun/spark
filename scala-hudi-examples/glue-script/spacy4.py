@@ -3,10 +3,12 @@ import site
 from importlib import reload
 import sys
 import boto3
- 
+''' 
+TODO ?? check upfront if installed and not install 
+'''
 from setuptools.command import easy_install
 install_path = os.environ['GLUE_INSTALLATION']
-easy_install.main( ["--install-dir", install_path, "spacy==2.3.0"] )
+easy_install.main( ["--install-dir", install_path, "spacy==2.3.1"] )
 easy_install.main( ["--install-dir", install_path, "spacy-langdetect"] )
 reload(site)
  
@@ -20,7 +22,9 @@ def downloadDirectoryFroms3(bucketName, remoteDirectoryName):
         if not os.path.exists(os.path.dirname(obj.key)):
             os.makedirs(os.path.dirname(obj.key))
         bucket.download_file(obj.key, obj.key)
- 
+''' 
+TODO ?? check upfront if already available in tmp and don't download if already exists 
+''' 
 downloadDirectoryFroms3('aaktests','Glue/model/en_core_web_sm/')
  
 nlp = spacy.load(f'/tmp/Glue/model/en_core_web_sm/en_core_web_sm-2.3.1')
