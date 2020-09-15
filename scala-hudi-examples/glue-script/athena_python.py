@@ -106,7 +106,7 @@ if __name__ == '__main__':
               'Database': 'default'
           },
           ResultConfiguration = {
-              'OutputLocation': 's3://bucketname/Glue/customer/PETCO/ecc22'
+              'OutputLocation': 's3://bucketname/Glue/someone/ecc22'
           }
       )  
 '''
